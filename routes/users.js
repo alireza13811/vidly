@@ -12,13 +12,14 @@ router.post('/', async (req, res)=>{
     if(user) return res.status(400).send('User already registered.');
 
     user = await createUser(req.body);
-    res.send(_.pick(user, ['_id', 'name', 'email']));
+    const token = user.generateAuthToken();
+    res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
 });
 
 async function createUser(data){
     const user = new User(_.pick(data, ['name', 'email', 'password']));
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash('1234', salt);
+    user.password = await bcrypt.hash(data.password, salt);
     try{
         await user.save();
         return user
