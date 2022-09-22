@@ -1,4 +1,4 @@
-const {Customer, validateData} = require('../models/customers');
+const {Customer, validate} = require('../models/customers');
 const express = require('express');
 const router = express.Router();
 
@@ -8,16 +8,15 @@ router.get('/', async (req, res)=>{
 });
 
 router.get('/:id', async (req,res)=>{
-    try{
-        const customer = await Customer.findById(req.params.id);
-        res.send(customer);
-    }catch (exp){
-        return res.status(404).send('Customer with that ID not found!');
-    }
+
+    const customer = await Customer.findById(req.params.id).exec();
+    res.send(customer);
+    if(!customer) res.status(404).send('Customer with that ID not found!');
+
 });
 
 router.post('/', async (req, res)=>{
-    const {error} = validateData(req.body);
+    const {error} = validate(req.body);
     if(error) return res.status(400).send(error.message);
 
     const customer = await createCustomer(req.body.name, req.body.phone, req.body.isGold);
@@ -27,7 +26,7 @@ router.post('/', async (req, res)=>{
 
 router.put('/:id', async (req, res)=>{
 
-    const {error} = validateData(req.body);
+    const {error} = validate(req.body);
     if(error) return res.status(400).send(error.message);
 
     const customer = await Customer.findByIdAndUpdate(req.params.id, {

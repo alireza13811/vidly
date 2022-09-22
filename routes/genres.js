@@ -1,4 +1,4 @@
-const {Genre, validateData} = require('../models/genres');
+const {Genre, validate} = require('../models/genres');
 const express = require('express');
 const router = express.Router();
 
@@ -8,16 +8,15 @@ router.get('/', async (req, res)=>{
 });
 
 router.get('/:id', async (req,res)=>{
-    try{
-        const genre = await Genre.findById(req.params.id);
-        res.send(genre);
-    }catch (exp){
-        return res.status(404).send('Genre with that ID not found!');
-    }
+
+    const genre = await Genre.findById(req.params.id).exec();
+    if(!genre) return res.status(404).send('Genre with that ID not found!');
+    res.send(genre);
+
 });
 
 router.post('/', async (req, res)=>{
-    const {error} = validateData(req.body);
+    const {error} = validate(req.body);
     if(error) return res.status(400).send(error.message);
 
     const genre = await createGenre(req.body.name);
@@ -27,7 +26,7 @@ router.post('/', async (req, res)=>{
 
 router.put('/:id', async (req, res)=>{
 
-    const {error} = validateData(req.body);
+    const {error} = validate(req.body);
     if(error) return res.status(400).send(error.message);
 
     const genre = await Genre.findByIdAndUpdate(req.params.id, {
