@@ -11,7 +11,7 @@ const GenresSchema = new mongoose.Schema({
     }
 })
 
-const Genre = mongoose.model('Genre ', GenresSchema);
+const Genre = mongoose.model('Genre', GenresSchema);
 
 function validateData(genre){
     const schema = Joi.object({
