@@ -70,8 +70,8 @@ async function createMovie(title, genre, numberInStock, dailyRentalRate){
         dailyRentalRate
     });
     try{
-        const result = await movie.save();
-        return result
+        await movie.save();
+        return movie
     }catch (exp){
         for(let field in exp.errors){
             console.log(exp.errors[field].message);

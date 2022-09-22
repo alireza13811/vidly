@@ -55,8 +55,8 @@ async function createCustomer(name, phone, isGold){
         isGold: isGold
     })
     try{
-        const result = await customer.save();
-        return result
+        await customer.save();
+        return customer
     }catch (exp){
         for(let field in exp.errors){
             console.log(exp.errors[field].message);

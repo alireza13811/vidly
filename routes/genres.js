@@ -51,8 +51,8 @@ async function createGenre(name){
         name: name,
     })
     try{
-        const result = await genre.save();
-        return result
+        await genre.save();
+        return genre
     }catch (exp){
         for(let field in exp.errors){
             console.log(exp.errors[field].message);
