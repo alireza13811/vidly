@@ -12,8 +12,19 @@ const auth = require('./routes/auth');
 const mongoose = require('mongoose')
 const config = require('config');
 const error = require('./middleware/error');
+const logger = require('./utils/logger');
 
 const app = express();
+
+process.on('uncaughtException', (ex) => {
+    logger.error(ex.message, ex);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (ex) => {
+    logger.error(ex.message, ex);
+    process.exit(1);
+});
 
 if(!config.get('jwtPrivateKey')){
     console.error('FATAL ERROR: jwtPrivateKey is not defined.');
@@ -26,6 +37,7 @@ mongoose.connect('mongodb://localhost/vidly_db')
 
 app.use(morgan('tiny'));
 app.use(express.json());
+
 app.use('/api/genres', genres);
 app.use('/api/customers', customers);
 app.use('/api/movies', movies);
